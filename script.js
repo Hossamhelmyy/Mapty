@@ -86,6 +86,7 @@ class App {
   #mapZoomLevel = 13;
   #mapEvent;
   #workouts = [];
+  #markers = [];
 
   constructor() {
     // Get user's position
@@ -101,7 +102,6 @@ class App {
 
     sortBtn.addEventListener('click', this.sortWorkouts.bind(this));
     resetBtn.addEventListener('click', this.reset.bind(this));
-    containerWorkouts.addEventListener('click', this.deleteWorkout.bind(this));
   }
 
   _getPosition() {
@@ -220,7 +220,7 @@ class App {
   }
 
   _renderWorkoutMarker(workout) {
-    L.marker(workout.coords)
+    const marker = L.marker(workout.coords)
       .addTo(this.#map)
       .bindPopup(
         L.popup({
@@ -235,6 +235,7 @@ class App {
         `${workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'} ${workout.description}`
       )
       .openPopup();
+    this.#markers.push(marker);
   }
 
   _renderWorkout(workout) {
@@ -252,8 +253,9 @@ class App {
           <span class="workout__icon">⏱</span>
           <span class="workout__value">${workout.duration}</span>
           <span class="workout__unit">min</span>
+
         </div>
-    `;
+        `;
 
     if (workout.type === 'running')
       html += `
@@ -266,6 +268,7 @@ class App {
           <span class="workout__icon">🦶🏼</span>
           <span class="workout__value">${workout.cadence}</span>
           <span class="workout__unit">spm</span>
+
         </div>
       </li>
       `;
@@ -281,6 +284,7 @@ class App {
           <span class="workout__icon">⛰</span>
           <span class="workout__value">${workout.elevationGain}</span>
           <span class="workout__unit">m</span>
+
         </div>
       </li>
       `;
@@ -344,21 +348,21 @@ class App {
     console.log(workout);
   }
 
-  deleteWorkout(e) {
-    const workoutEl = e.target.closest('.workout');
-    if (!workoutEl) return;
-    const el = document.querySelector(
-      `.workout[data-id ='${workoutEl.dataset.id}']`
-    );
-    el.remove();
-    this.#workouts = this.#workouts.filter(
-      value => value.id !== workoutEl.dataset.id
-    );
+  // deleteWorkout(e) {
+  //   const workoutEl = e.target.closest('.workout');
+  //   if (!workoutEl) return;
+  //   const el = document.querySelector(
+  //     `.workout[data-id ='${workoutEl.dataset.id}']`
+  //   );
+  //   el.remove();
+  //   this.#workouts = this.#workouts.filter(
+  //     value => value.id !== workoutEl.dataset.id
+  //   );
 
-    console.log(el);
-    console.log(this.#workouts);
-    this._setLocalStorage();
-  }
+  //   console.log(el);
+  //   console.log(this.#workouts);
+  //   this._setLocalStorage();
+  // }
 }
 
 // create new instance from App class to excute the constuctor funcs.
